@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_tts/flutter_tts.dart';
 
 class Numbers extends StatefulWidget {
   @override
@@ -21,19 +22,44 @@ class _NumbersState extends State<Numbers> {
   ];
 
   bool _showFirstGroup = true;
+  FlutterTts flutterTts =FlutterTts();
+
+  @override
+  void initState() {
+    super.initState();
+  }
 
   List<Map<String, String>> get firstGroup {
     return koreanNumbers.sublist(0, 11);
   }
 
   List<Map<String, String>> get secondGroup {
-    return koreanNumbers.sublist(0, 11); 
+    return koreanNumbers.sublist(0, 11);
   }
 
   void _toggleGroup() {
     setState(() {
       _showFirstGroup = !_showFirstGroup;
     });
+  }
+
+  Future<void> _speak(String text) async {
+    try {
+      await flutterTts.setLanguage("ko-KR");
+      await flutterTts.setSpeechRate(0.5);  // You can adjust this value as needed
+      await flutterTts.setVolume(1.0);      // Set volume
+      await flutterTts.setPitch(0.5);       // Set pitch
+      await flutterTts.speak(text);
+      print("Speaking: $text");
+    } catch (e) {
+      print("Error: $e");
+    }
+  }
+
+  @override
+  void dispose() {
+    flutterTts.stop();
+    super.dispose();
   }
 
   @override
@@ -134,6 +160,7 @@ class _NumbersState extends State<Numbers> {
                               fontWeight: FontWeight.w500,
                             ),
                           ),
+                          SizedBox(width: 10,),
                           Text(
                             item['korean']!,
                             style: TextStyle(
@@ -144,8 +171,7 @@ class _NumbersState extends State<Numbers> {
                           ),
                         ],
                       ),
-                      Column(
-                        crossAxisAlignment: CrossAxisAlignment.end,
+                      Row(
                         children: [
                           Text(
                             '${item['meaning']}',
@@ -155,8 +181,16 @@ class _NumbersState extends State<Numbers> {
                               fontWeight: FontWeight.w500,
                             ),
                           ),
+                          SizedBox(width: 10,),
+                          IconButton(
+                            icon: Icon(Icons.volume_up, color: Color(0xff002D62)),
+                            onPressed: () {
+                              _speak(item['korean']!);
+                            },
+                          ),
+
                         ],
-                      ),
+                      )
                     ],
                   ),
                 );

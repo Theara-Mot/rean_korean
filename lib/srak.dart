@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_tts/flutter_tts.dart';
 
 class SrakPage extends StatefulWidget {
   @override
@@ -7,30 +8,31 @@ class SrakPage extends StatefulWidget {
 
 class _SrakPageState extends State<SrakPage> {
   final List<Map<String, String>> vowels = [
-  {'korean': '아', 'khmer': 'អា'},
-  {'korean': '야', 'khmer': 'យ៉ា'},
-  {'korean': '어', 'khmer': 'អ'},
-  {'korean': '여', 'khmer': 'យ៉'},
-  {'korean': '오', 'khmer': 'អូ'},
-  {'korean': '요', 'khmer': 'យូ'},
-  {'korean': '우', 'khmer': 'អូ'},
-  {'korean': '유', 'khmer': 'យូ'},
-  {'korean': '으', 'khmer': 'អឺ'},
-  {'korean': '이', 'khmer': 'អ៊ី'},
-  {'korean': '애', 'khmer': 'អែ'},
-  {'korean': '얘', 'khmer': 'យែ'},
-  {'korean': '에', 'khmer': 'អេ'},
-  {'korean': '예', 'khmer': 'យ៉េ'},
-  {'korean': '와', 'khmer': 'វ៉ា'},
-  {'korean': '왜', 'khmer': 'វ៉ែ'},
-  {'korean': '외', 'khmer': 'វេ'},
-  {'korean': '워', 'khmer': 'វ៉'},
-  {'korean': '웨', 'khmer': 'វ៉េ'},
-  {'korean': '위', 'khmer': 'វី'},
-  {'korean': '의', 'khmer': 'អ៊ើយ'}
-];
+    {'korean': '아', 'khmer': 'អា'},
+    {'korean': '야', 'khmer': 'យ៉ា'},
+    {'korean': '어', 'khmer': 'អ'},
+    {'korean': '여', 'khmer': 'យ៉'},
+    {'korean': '오', 'khmer': 'អូ'},
+    {'korean': '요', 'khmer': 'យូ'},
+    {'korean': '우', 'khmer': 'អូ'},
+    {'korean': '유', 'khmer': 'យូ'},
+    {'korean': '으', 'khmer': 'អឺ'},
+    {'korean': '이', 'khmer': 'អ៊ី'},
+    {'korean': '애', 'khmer': 'អែ'},
+    {'korean': '얘', 'khmer': 'យែ'},
+    {'korean': '에', 'khmer': 'អេ'},
+    {'korean': '예', 'khmer': 'យ៉េ'},
+    {'korean': '와', 'khmer': 'វ៉ា'},
+    {'korean': '왜', 'khmer': 'វ៉ែ'},
+    {'korean': '외', 'khmer': 'វេ'},
+    {'korean': '워', 'khmer': 'វ៉'},
+    {'korean': '웨', 'khmer': 'វ៉េ'},
+    {'korean': '위', 'khmer': 'វី'},
+    {'korean': '의', 'khmer': 'អ៊ើយ'}
+  ];
 
   bool _showFirstGroup = true;
+  FlutterTts flutterTts = FlutterTts();
 
   List<Map<String, String>> get firstGroup {
     return vowels.sublist(0, 10);
@@ -44,6 +46,18 @@ class _SrakPageState extends State<SrakPage> {
     setState(() {
       _showFirstGroup = !_showFirstGroup;
     });
+  }
+
+  Future<void> _speak(String koreanText) async {
+    await flutterTts.setLanguage("ko-KR");
+    await flutterTts.setSpeechRate(0.4);
+    await flutterTts.speak(koreanText);
+  }
+
+  @override
+  void dispose() {
+    flutterTts.stop();
+    super.dispose();
   }
 
   @override
@@ -63,7 +77,8 @@ class _SrakPageState extends State<SrakPage> {
             mainAxisAlignment: MainAxisAlignment.spaceEvenly,
             children: [
               SizedBox(width: 8,),
-              Expanded(child: Ink(
+              Expanded(
+                child: Ink(
                   child: InkWell(
                     onTap: () async {
                       if (!_showFirstGroup) {
@@ -76,14 +91,19 @@ class _SrakPageState extends State<SrakPage> {
                       padding: EdgeInsets.symmetric(horizontal: 30, vertical: 8),
                       decoration: BoxDecoration(
                         borderRadius: BorderRadius.circular(30),
-                        color:_showFirstGroup? Color(0xff002D62):Colors.white,
+                        color: _showFirstGroup ? Color(0xff002D62) : Colors.white,
                       ),
-                      child: Text('ស្រះទោល', style: TextStyle(color:_showFirstGroup? Colors.white: Color(0xff002D62))),
+                      child: Text(
+                        'ស្រះទោល',
+                        style: TextStyle(color: _showFirstGroup ? Colors.white : Color(0xff002D62)),
+                      ),
                     ),
                   ),
-                ),),
+                ),
+              ),
               SizedBox(width: 8,),
-              Expanded(child: Ink(
+              Expanded(
+                child: Ink(
                   child: InkWell(
                     onTap: () async {
                       if (_showFirstGroup) {
@@ -96,12 +116,16 @@ class _SrakPageState extends State<SrakPage> {
                       padding: EdgeInsets.symmetric(horizontal: 30, vertical: 8),
                       decoration: BoxDecoration(
                         borderRadius: BorderRadius.circular(30),
-                        color:!_showFirstGroup? Color(0xff002D62):Colors.white,
+                        color: !_showFirstGroup ? Color(0xff002D62) : Colors.white,
                       ),
-                      child: Text('ស្រះទោល', style: TextStyle(color:!_showFirstGroup? Colors.white: Color(0xff002D62))),
+                      child: Text(
+                        'ស្រះទោល',
+                        style: TextStyle(color: !_showFirstGroup ? Colors.white : Color(0xff002D62)),
+                      ),
                     ),
                   ),
-                ),),
+                ),
+              ),
               SizedBox(width: 8,),
             ],
           ),
@@ -123,15 +147,6 @@ class _SrakPageState extends State<SrakPage> {
                       Row(
                         children: [
                           Text(
-                            '${index + (_showFirstGroup ? 1 : 11)}. ',
-                            style: TextStyle(
-                              color: Color.fromARGB(113, 0, 46, 98),
-                              fontSize: 17,
-                              fontWeight: FontWeight.w500,
-                            ),
-                          ),
-                          SizedBox(width: 5),
-                          Text(
                             item['korean']!,
                             style: TextStyle(
                               color: Color(0xff002D62),
@@ -141,14 +156,25 @@ class _SrakPageState extends State<SrakPage> {
                           ),
                         ],
                       ),
-                      Text(
-                        item['khmer']!,
-                        style: TextStyle(
-                          color: Color(0xff002D62),
-                          fontSize: 17,
-                          fontWeight: FontWeight.w500,
-                        ),
-                      ),
+                      Row(
+                        children: [
+                          Text(
+                            item['khmer']!,
+                            style: TextStyle(
+                              color: Color(0xff002D62),
+                              fontSize: 17,
+                              fontWeight: FontWeight.w500,
+                            ),
+                          ),
+                          SizedBox(width: 10),
+                          IconButton(
+                            icon: Icon(Icons.volume_up, color: Color(0xff002D62)),
+                            onPressed: () {
+                              _speak(item['korean']!);
+                            },
+                          ),
+                        ],
+                      )
                     ],
                   ),
                 );
@@ -160,3 +186,4 @@ class _SrakPageState extends State<SrakPage> {
     );
   }
 }
+
