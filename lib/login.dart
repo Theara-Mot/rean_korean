@@ -1,98 +1,54 @@
 import 'package:flutter/material.dart';
-import 'package:http/http.dart' as http;
-import 'dart:convert';
+import 'package:flutter_telegram_login/flutter_telegram_login.dart';
+
+
 
 class LoginScreen extends StatefulWidget {
+  const LoginScreen({super.key});
+
   @override
-  _LoginScreenState createState() => _LoginScreenState();
+  State<LoginScreen> createState() => _LoginScreenState();
 }
 
 class _LoginScreenState extends State<LoginScreen> {
-  final _phoneNumberController = TextEditingController();
-  String _verificationCode = '';
-  bool _isCodeSent = false;
-
-  void _sendCode() async {
-    final phoneNumber = _phoneNumberController.text;
-    final apiId = 'YOUR_API_ID';
-    final apiHash = 'YOUR_API_HASH';
-
-    final response = await http.post(
-      Uri.parse('https://api.telegram.org/bot<your_bot_token>/sendCode'),
-      body: {
-        'phone_number': phoneNumber,
-        'api_id': apiId,
-        'api_hash': apiHash,
-      },
-    );
-
-    final responseData = json.decode(response.body);
-    if (responseData['ok']) {
-      setState(() {
-        _isCodeSent = true;
-      });
-    } else {
-      // Handle error
-    }
-  }
-
-  void _verifyCode() async {
-    final phoneNumber = _phoneNumberController.text;
-    final apiId = 'YOUR_API_ID';
-    final apiHash = 'YOUR_API_HASH';
-    final verificationCode = _verificationCode;
-
-    final response = await http.post(
-      Uri.parse('https://api.telegram.org/bot<your_bot_token>/signIn'),
-      body: {
-        'phone_number': phoneNumber,
-        'api_id': apiId,
-        'api_hash': apiHash,
-        'verification_code': verificationCode,
-      },
-    );
-
-    final responseData = json.decode(response.body);
-    if (responseData['ok']) {
-      // Handle successful login
-    } else {
-      // Handle error
-    }
-  }
-
+  final TelegramLogin telegramLogin = TelegramLogin(
+    '+855715538000','','Thearamot.epizy.com'
+  );
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      appBar: AppBar(
-        title: Text('Telegram Login'),
-      ),
-      body: Padding(
-        padding: const EdgeInsets.all(16.0),
-        child: Column(
-          mainAxisAlignment: MainAxisAlignment.center,
-          children: <Widget>[
-            TextField(
-              controller: _phoneNumberController,
-              decoration: InputDecoration(labelText: 'Phone Number'),
-              keyboardType: TextInputType.phone,
-            ),
-            SizedBox(height: 20),
-            if (_isCodeSent)
-              TextField(
-                decoration: InputDecoration(labelText: 'Verification Code'),
-                onChanged: (value) {
-                  setState(() {
-                    _verificationCode = value;
-                  });
-                },
-              ),
-            SizedBox(height: 20),
-            ElevatedButton(
-              onPressed: _isCodeSent ? _verifyCode : _sendCode,
-              child: Text(_isCodeSent ? 'Verify Code' : 'Send Code'),
-            ),
-          ],
-        ),
+      body: Center(
+          child: Column(
+              children: [
+                ElevatedButton(
+                    onPressed: telegramLogin.loginTelegram,
+                    child: const Text("loginTelegram")
+                ),
+                ElevatedButton(
+                    onPressed: () async {
+                      var success = await telegramLogin.checkLogin();
+                      print(success);
+                    },
+                    child: const Text("checkLogin")
+                ),
+                ElevatedButton(
+                    onPressed: () async {
+                      var data = await telegramLogin.getData();
+                      print(data);
+                      if (data) {
+                        print(telegramLogin.userData);
+                      }
+                    },
+                    child: const Text("getData")
+                ),
+                ElevatedButton(
+                    onPressed: () async {
+                      await telegramLogin.telegramLaunch();
+                    },
+                    child: const Text("openTelegram")
+                ),
+              ]
+          )
       ),
     );
   }

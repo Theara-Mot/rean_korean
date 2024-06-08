@@ -34,6 +34,7 @@ class _ConsonantsState extends State<Consonants> {
   int _selectedItemIndex = -1;
   bool showTranslate = true;
   bool showPinyin = true;
+  bool showKorean = true;
 
   List<Map<String, String>> get firstGroup {
     return consonants.sublist(0, 14);
@@ -121,7 +122,7 @@ class _ConsonantsState extends State<Consonants> {
                 setState(() {
                   _selectedItemIndex = index;
                 });
-              },
+              }, showKorean: showKorean,
             ),
           ),
         ],

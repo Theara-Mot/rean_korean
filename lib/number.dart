@@ -1,6 +1,8 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_tts/flutter_tts.dart';
 
+import 'Widget/buildContainer.dart';
+
 class Numbers extends StatefulWidget {
   @override
   _NumbersState createState() => _NumbersState();
@@ -8,20 +10,23 @@ class Numbers extends StatefulWidget {
 
 class _NumbersState extends State<Numbers> {
   final List<Map<String, String>> koreanNumbers = [
-    {'number': '0', 'korean': '영', 'meaning': 'យ៉ង់'},
-    {'number': '1', 'korean': '일', 'meaning': 'អ៊ីល'},
-    {'number': '2', 'korean': '이', 'meaning': 'អ៊ី'},
-    {'number': '3', 'korean': '삼', 'meaning': 'សាំម'},
-    {'number': '4', 'korean': '사', 'meaning': 'សា'},
-    {'number': '5', 'korean': '오', 'meaning': 'យ៉ូ'},
-    {'number': '6', 'korean': '육', 'meaning': 'យូក'},
-    {'number': '7', 'korean': '칠', 'meaning': 'ឈីល'},
-    {'number': '8', 'korean': '팔', 'meaning': 'ផាល'},
-    {'number': '9', 'korean': '구', 'meaning': 'ឃូ'},
-    {'number': '10', 'korean': '십', 'meaning': 'ស៊ីប'},
+    {'khmer': '0', 'korean': '영', 'korean_name': 'យ៉ង់'},
+    {'khmer': '1', 'korean': '일', 'korean_name': 'អ៊ីល'},
+    {'khmer': '2', 'korean': '이', 'korean_name': 'អ៊ី'},
+    {'khmer': '3', 'korean': '삼', 'korean_name': 'សាំម'},
+    {'khmer': '4', 'korean': '사', 'korean_name': 'សា'},
+    {'khmer': '5', 'korean': '오', 'korean_name': 'យ៉ូ'},
+    {'khmer': '6', 'korean': '육', 'korean_name': 'យូក'},
+    {'khmer': '7', 'korean': '칠', 'korean_name': 'ឈីល'},
+    {'khmer': '8', 'korean': '팔', 'korean_name': 'ផាល'},
+    {'khmer': '9', 'korean': '구', 'korean_name': 'ឃូ'},
+    {'khmer': '10', 'korean': '십', 'korean_name': 'ស៊ីប'},
   ];
-
   bool _showFirstGroup = true;
+  int _selectedItemIndex = -1;
+  bool showTranslate = true;
+  bool showPinyin = true;
+  bool showKorean = true;
   FlutterTts flutterTts =FlutterTts();
 
   @override
@@ -71,6 +76,47 @@ class _NumbersState extends State<Numbers> {
       appBar: AppBar(
         backgroundColor: Color(0xff002D62),
         title: Text('លេខ', style: TextStyle(color: Colors.white)),
+        actions: [
+          GestureDetector(
+            onTap: () {
+              setState(() {
+                showKorean = !showKorean;
+              });
+            },
+            child: Icon(
+              !showKorean ? Icons.check_box_outline_blank_outlined : Icons.check_box,
+              color: Colors.white,
+              size: 25,
+            ),
+          ),
+          SizedBox(width: 10),
+          GestureDetector(
+            onTap: () {
+              setState(() {
+                showPinyin = !showPinyin;
+              });
+            },
+            child: Icon(
+              !showPinyin ? Icons.check_box_outline_blank_outlined : Icons.check_box,
+              color: Colors.white,
+              size: 25,
+            ),
+          ),
+          SizedBox(width: 10),
+          GestureDetector(
+            onTap: () {
+              setState(() {
+                showTranslate = !showTranslate;
+              });
+            },
+            child: Icon(
+              !showTranslate ? Icons.check_box_outline_blank_outlined : Icons.check_box,
+              color: Colors.white,
+              size: 25,
+            ),
+          ),
+          SizedBox(width: 10)
+        ],
       ),
       body: Column(
         children: [
@@ -134,67 +180,18 @@ class _NumbersState extends State<Numbers> {
               SizedBox(width: 8),
             ],
           ),
+          SizedBox(height: 10),
           Expanded(
-            child: ListView.builder(
-              itemCount: groupToShow.length,
-              itemBuilder: (context, index) {
-                final item = groupToShow[index];
-
-                return Container(
-                  margin: const EdgeInsets.only(left: 8, right: 8, top: 8),
-                  padding: EdgeInsets.symmetric(horizontal: 20, vertical: 8),
-                  decoration: BoxDecoration(
-                    color: Colors.white,
-                    borderRadius: BorderRadius.circular(10),
-                  ),
-                  child: Row(
-                    mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                    children: [
-                      Row(
-                        children: [
-                          Text(
-                            '${item['number']} ',
-                            style: TextStyle(
-                              color: Color.fromARGB(113, 0, 46, 98),
-                              fontSize: 17,
-                              fontWeight: FontWeight.w500,
-                            ),
-                          ),
-                          SizedBox(width: 10,),
-                          Text(
-                            item['korean']!,
-                            style: TextStyle(
-                              color: Color(0xff002D62),
-                              fontSize: 22,
-                              fontWeight: FontWeight.w500,
-                            ),
-                          ),
-                        ],
-                      ),
-                      Row(
-                        children: [
-                          Text(
-                            '${item['meaning']}',
-                            style: TextStyle(
-                              color: Color(0xff002D62),
-                              fontSize: 17,
-                              fontWeight: FontWeight.w500,
-                            ),
-                          ),
-                          SizedBox(width: 10,),
-                          IconButton(
-                            icon: Icon(Icons.volume_up, color: Color(0xff002D62)),
-                            onPressed: () {
-                              _speak(item['korean']!);
-                            },
-                          ),
-
-                        ],
-                      )
-                    ],
-                  ),
-                );
-              },
+            child: BuildContainer(
+              groupToShow: groupToShow,
+              selectedItemIndex: _selectedItemIndex,
+              showPinyin: showPinyin,
+              showTranslate: showTranslate,
+              onTap: (index) {
+                setState(() {
+                  _selectedItemIndex = index;
+                });
+              }, showKorean:showKorean,
             ),
           ),
         ],
